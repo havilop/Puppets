@@ -1,0 +1,28 @@
+{
+	"cancel": "S",
+	"attack": "A",
+	"followMainCharacter": "X",
+	"ability1": "Q",
+	"ability2": "W",
+	"ability3": "E",
+	"ability6": "R",
+
+	"ability4": "D",
+	"ability5": "F",
+
+	"item1": "TAB",
+	
+	"item2": "TWO",
+	
+	"item3": "SPACE",
+	
+	"item4": "ONE",
+	
+	"item5": "C",
+	
+	"item6": "V",
+
+	"shop": "CAPSLOCK"
+
+
+}

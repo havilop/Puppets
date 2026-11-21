@@ -1,0 +1,31 @@
+{
+	
+	"settings_map":
+	{
+	  "world_size": [2000,2000]
+	},
+	
+	
+    "map": [
+           {
+            "name_class": "FlxSprite",
+            "position": [0,0],
+            "image": "assets/maps/image.png",
+            "size": [2000,2000]
+           },
+           {
+            "name_class": "FlxSprite",
+            "position": [200,200],
+            "image": "assets/maps/image.png",
+            "colision": true
+           },
+           {
+            "name_class": "SpawnerPlayersPuppets",
+            "arguments": [500,500]
+           },
+           {
+            "name_class": "SpawnerPlayersPuppets",
+            "arguments": [500,500]
+           }
+]
+}
