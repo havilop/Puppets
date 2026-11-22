@@ -160,7 +160,7 @@ class PlayState extends PuppetsState
 
 		if (FlxG.keys.justPressed.ONE)
 		{
-			addPlayer("Necrophos", people, true);
+			addPlayer("Monkey_King", people, true);
 		}
 
 		if (FlxG.keys.justPressed.THREE)

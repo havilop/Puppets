@@ -14,7 +14,7 @@ class Abilitiy_Deadalus extends Ability
 	{
 		super.functionSpell();
 
-		if (attackEntity.typeEntity == CHARACTER)
+		if (attackEntity.typeEntity != BUILDING || attackEntity.typeEntity != WARD || attackEntity.typeEntity != COURIER)
 		{
 			var number = FlxG.random.float(0, 100);
 

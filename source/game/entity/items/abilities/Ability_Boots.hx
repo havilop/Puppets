@@ -7,7 +7,7 @@ class Ability_Boots extends Ability
 {
 	public function new()
 	{
-		super(false, 325, non_directional_aura, 3, 5, 100, 1, false, "assets/player/characters/necrophos/aura.png");
+		super(false, 325, non_directional_aura, 0, 5, 100, 1, false, "assets/player/characters/necrophos/aura.png");
 		this.skillpoints = 1;
 		//setUpdate(0.5);
 	}
@@ -16,6 +16,7 @@ class Ability_Boots extends Ability
 	{
 		super.functionSpell();
 
+		selfEntity.heal(1000);
 		item.removeItem();
 
 	}

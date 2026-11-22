@@ -12,6 +12,7 @@ class Item extends FlxGroup
 	public var selfEntity:Entity;
 	public var init:Bool = false;
 	public var key:Int = 0;
+	public var count:Int = 0;
 
 	public var storedAbility:Class<Dynamic>;
 

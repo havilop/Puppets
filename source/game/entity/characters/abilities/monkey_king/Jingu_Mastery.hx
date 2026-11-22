@@ -6,11 +6,13 @@ import flixel.util.FlxCollision;
 class Jingu_Mastery extends Ability
 {
 	public var damage:Int = 0;
+	public var lifesteal:Int = 0;
 
 	public function new()
 	{
 		super(true, 325, attack, 3, 5, 100, 4, true, "assets/player/characters/monkey_king/jingu_mastery.png", false);
 		super.setOptionPoint('damage', [35, 80, 135, 180]);
+		super.setOptionPoint('lifesteal',[20,40,60,80]);
 	}
 
 	override function functionSpell()
@@ -20,7 +22,7 @@ class Jingu_Mastery extends Ability
 		if (!attackEntity.hasEffectType(Jingu_Mastery_Effet) && !selfEntity.hasEffectType(Jingu_Mastery_Effect))
 		{
 			if (attackEntity.typeEntity == CHARACTER)
-				attackEntity.addEffect(new Jingu_Mastery_Effet(selfEntity, damage));
+				attackEntity.addEffect(new Jingu_Mastery_Effet(selfEntity, damage,lifesteal));
 		}
 
 		if (attackEntity.hasEffectType(Jingu_Mastery_Effet)
@@ -33,6 +35,7 @@ class Jingu_Mastery extends Ability
 				{
 					var w:Jingu_Mastery_Effet = cast i;
 					w.damage = damage;
+					w.lifesteal = lifesteal;
 					w.count += 1;
 					break;
 				}
@@ -60,14 +63,16 @@ class Jingu_Mastery_Effet extends Effect
 {
 	var whogive:Entity;
 
+	public var lifesteal = 0;
 	public var damage = 0;
 
-	public function new(who:Entity, damag:Int)
+	public function new(who:Entity, damag:Int,lifeste)
 	{
 		super(true,Path.getPathCharacter("monkey_king","jingu_mastery.png"),"Jingu_Mastery","Hits from Monkey King");
 
 		whogive = who;
 
+		lifesteal = lifeste;
 		damage = damag;
 	}
 
@@ -89,7 +94,7 @@ class Jingu_Mastery_Effet extends Effect
 		{
 			if (count >= 4)
 			{
-				whogive.addEffect(new Jingu_Mastery_Effect(damage));
+				whogive.addEffect(new Jingu_Mastery_Effect(damage,lifesteal));
 				for (w in selfEntity.visualEffects)
 				{
 					if (Std.isOfType(w, Jingu_Mastery_VisualEffect_DeBuff))
@@ -112,13 +117,16 @@ class Jingu_Mastery_Effet extends Effect
 class Jingu_Mastery_Effect extends Effect
 {
 	var damage:Int = 0;
+	var lifestea:Int = 0;
 	var functios:Void->Void;
 
-	public function new(damag:Int)
+	public function new(damag:Int,lifesteal:Int)
 	{
 		super(true,Path.getPathCharacter("monkey_king","jingu_mastery.png"),"Jingu_Mastery","Bonus Damage and Lifesteal");
 
 		count = 4;
+
+		lifestea = lifesteal;
 
 		functios = function()
 		{
@@ -136,6 +144,8 @@ class Jingu_Mastery_Effect extends Effect
 			//selfEntity.attackSomeone.add(functios);
 			selfEntity.addVisualEffect(new Jingu_Mastery_VisualEffect_Buff());
 			selfEntity.addFlatBonus('damagePhysic', damage);
+			trace(lifestea);
+			selfEntity.addFlatBonus('lifeStealPhysic',lifestea);
 		}, function name()
 		{
 			for (w in selfEntity.visualEffects)
@@ -147,12 +157,14 @@ class Jingu_Mastery_Effect extends Effect
 				}
 			}
 			selfEntity.removeFlatBonus('damagePhysic', damage);
+			selfEntity.removeFlatBonus('lifeStealPhysic', lifestea);
 			//selfEntity.attackSomeone.remove(functios);
 		}, function name(elapsed:Float)
 		{
 			if (count <= 0)
 			{
 				selfEntity.removeFlatBonus('damagePhysic', damage);
+				selfEntity.removeFlatBonus('lifeStealPhysic',lifestea);
 				//selfEntity.attackSomeone.remove(functios);
 				removeEffect();
 			}

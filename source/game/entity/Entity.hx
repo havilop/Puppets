@@ -49,8 +49,8 @@ class Entity extends FlxGroup
 	var init = false;
 
 	public var entityHitbox:FlxSprite;
-	//public var entityHitbox:FlxSprite;
 
+	// public var entityHitbox:FlxSprite;
 	public var bgBar:FlxSprite;
 	public var id:Int = 0;
 
@@ -90,21 +90,23 @@ class Entity extends FlxGroup
 	public var isSelect:Bool = false;
 
 	public var team:PuppetsTeamEnum = neutral;
+	public var typeEntity:PuppetsTypeEntityEnum = CHARACTER;
 	public var name:String = "";
 	public var enemy:Bool = false;
 
 	public var rangeAttackHitBox:FlxShapeCircle;
-	public var attackAble:Bool = true;
-	public var typeEntity:PuppetsTypeEntityEnum = CHARACTER;
+	public var attackAble:Bool = false;
 	public var typeAttack:PuppetsTypeAttackEnum = RANGE;
 	public var rangeAttack:Int = 100;
 	public var rangeSpeedAttack:Int = 0;
+	public var intervalAttack:Float = 1.5;
+	public var speedAttack:Int = 100;
 
 	public var damagePhysic:Float = 50;
 	public var damageMagic:Int = 0;
-	public var intervalAttack:Float = 1.5;
 
-	public var speedAttack:Int = 100;
+	public var lifeStealPhysic:Float = 50;
+	public var lifeStealMagic:Float = 0;
 
 	public var level:Int = 1;
 	public var levelPoints:Int = 1;
@@ -149,6 +151,9 @@ class Entity extends FlxGroup
 	public var flat_bonus_strength:Float = 0;
 	public var flat_bonus_strength_list:Array<Float> = [];
 
+	public var flat_bonus_agility:Float = 0;
+	public var flat_bonus_agility_list:Array<Float> = [];
+
 	public var flat_bonus_intellect:Float = 0;
 	public var flat_bonus_intellect_list:Array<Float> = [];
 
@@ -160,6 +165,12 @@ class Entity extends FlxGroup
 
 	public var flat_bonus_speed:Float = 0;
 	public var flat_bonus_speed_list:Array<Float> = [];
+
+	public var flat_bonus_maxhealth:Float = 0;
+	public var flat_bonus_maxhealth_list:Array<Float> = [];
+
+	public var flat_bonus_lifeStealPhysic:Float = 0;
+	public var flat_bonus_lifeStealPhysic_list:Array<Float> = [];
 
 	public var groupAbilities:FlxTypedGroup<Ability>;
 
@@ -193,10 +204,10 @@ class Entity extends FlxGroup
 		bgBar = new FlxSprite(0, 0);
 		add(bgBar);
 
-		//entityHitbox = new FlxSprite(0, 0, "assets/player/hitbox.png");
-		//entityHitbox.visible = true;
-		//entityHitbox.immovable = true;
-		//add(entityHitbox);
+		// entityHitbox = new FlxSprite(0, 0, "assets/player/hitbox.png");
+		// entityHitbox.visible = true;
+		// entityHitbox.immovable = true;
+		// add(entityHitbox);
 
 		entityHitbox = new FlxSprite(0, 0, "assets/player/hitboxDefault.png");
 		entityHitbox.visible = true;
@@ -340,6 +351,16 @@ class Entity extends FlxGroup
 			entityHitbox.velocity.x = 0;
 			entityHitbox.velocity.y = 0;
 		}
+		else
+		{
+			dead = false;
+
+			health = maxhealth;
+			mana = maxmana;
+
+			entityHitbox.velocity.x = 0;
+			entityHitbox.velocity.y = 0;
+		}
 	}
 
 	override function kill()
@@ -399,8 +420,9 @@ class Entity extends FlxGroup
 		{
 			trace("sex");
 			PlayState.destroyEntity(this);
-		} 
-		else {
+		}
+		else
+		{
 			PlayState.destroyEntity(this);
 		}
 	}
@@ -449,6 +471,17 @@ class Entity extends FlxGroup
 		if (entity.typeEntity == CREEP_LINE && typeEntity == CHARACTER)
 		{
 			coins += 50;
+		}
+
+		if (entity.typeEntity == BUILDING && typeEntity == CHARACTER)
+		{
+			for (i in PlayState.groupEntities)
+			{
+				if (i.typeEntity == CHARACTER && i.team == this.team)
+				{
+					i.coins += 100;
+				}
+			}
 		}
 
 		for (entites in PlayState.groupEntities)
@@ -538,15 +571,18 @@ class Entity extends FlxGroup
 	public function calculateWholeStatistics()
 	{
 		strength = (base_strength + (level - 1) * increase_strength) + flat_bonus_strength;
+		agility = (base_agility + (level - 1) * increase_agility) + flat_bonus_agility;
 		intellect = (base_intellect + (level - 1) * increase_intellect) + flat_bonus_intellect;
 
 		health_regeneration = (base_health_regeneration + (0.1 * strength)) + flat_bonus_health_regeneration;
 		mana_regeneration = (base_mana_regeneration + (0.05 * intellect)) + flat_bonus_mana_regeneration;
 
-		maxhealth = Std.int(basehealth + (strength * 22));
+		maxhealth = Std.int(basehealth + (strength * 22) + flat_bonus_maxhealth);
 		maxmana = Std.int(basemana + (12 * intellect));
 
 		damagePhysic = flat_bonus_damagePhysic;
+
+		lifeStealPhysic = flat_bonus_lifeStealPhysic;
 
 		speed = base_speed + Std.int(flat_bonus_speed);
 	}
@@ -676,7 +712,7 @@ class Entity extends FlxGroup
 			healthBar.createGradientFilledBar([FlxColor.fromRGB(100, 0, 0), FlxColor.RED, FlxColor.fromRGB(100, 0, 0)]);
 			healthBar.createColoredEmptyBar(FlxColor.fromRGB(55, 0, 0));
 			textName.color = FlxColor.RED;
-		} 
+		}
 
 		if (manaBar.visible)
 			bgBar.makeGraphic(Std.int((textLevel.fieldWidth + 5) + healthBar.width), Std.int(healthBar.height + manaBar.height + 5 + 6),
@@ -712,7 +748,6 @@ class Entity extends FlxGroup
 			remove(healthBar);
 			healthBar = new FlxBar(0, 0, LEFT_TO_RIGHT, 150, 10);
 			add(healthBar);
-			
 		}
 
 		revive();
@@ -722,6 +757,7 @@ class Entity extends FlxGroup
 			PlayState.setFocusOnPlayerAndUpdateHud(this, true);
 			entityHitbox.immovable = false;
 		}
+		attackAble = true;
 	}
 
 	public function addEffect(effect:Effect)
@@ -875,7 +911,15 @@ class Entity extends FlxGroup
 	public function takeDamage(typeDamage:PuppetsTypeDamageEnum, number:Float, ENTITYHWODEALDAMAGE:Entity)
 	{
 		if (typeDamage == physic)
-			health = health - Std.int(Math.round(number));
+		{
+			if (!this.hasStatusEffect(ETHEREAL))
+			{
+				health = health - Std.int(Math.round(number));
+
+				if (this.typeEntity != BUILDING || this.typeEntity != COURIER || this.typeEntity != WARD)
+					ENTITYHWODEALDAMAGE.heal(number * (ENTITYHWODEALDAMAGE.lifeStealPhysic / 100));
+			}
+		}
 
 		if (typeDamage == magic)
 		{
@@ -1063,8 +1107,6 @@ class Entity extends FlxGroup
 				var mox = FlxG.mouse.x;
 				var moy = FlxG.mouse.y;
 
-		
-
 				var dx = FlxG.mouse.x - entityHitbox.x;
 				var dy = FlxG.mouse.y - entityHitbox.y;
 
@@ -1132,10 +1174,8 @@ class Entity extends FlxGroup
 
 	function position()
 	{
-		
-
-		//entityHitbox.y = entityHitbox.y - entityHitbox.height + entityHitbox.height;
-		//entityHitbox.x = entityHitbox.x - entityHitbox.width + entityHitbox.width;
+		// entityHitbox.y = entityHitbox.y - entityHitbox.height + entityHitbox.height;
+		// entityHitbox.x = entityHitbox.x - entityHitbox.width + entityHitbox.width;
 
 		rangeXpHitBox.x = entityHitbox.x - rangeXpHitBox.radius + (entityHitbox.width / 2);
 		rangeXpHitBox.y = entityHitbox.y - rangeXpHitBox.radius + (entityHitbox.height / 2);
@@ -1154,8 +1194,6 @@ class Entity extends FlxGroup
 			textLevel.y = entityHitbox.y - 31;
 		}
 
-		
-
 		if (!isStatusEffect)
 		{
 			textName.y = entityHitbox.y - 31 - textName.fieldHeight - 5;
@@ -1165,8 +1203,8 @@ class Entity extends FlxGroup
 			textName.y = entityHitbox.y - 46 - 15 - 5 - 25 - 2;
 		}
 
-		playerCamera.x = entityHitbox.x + (playerCamera.width - entityHitbox.width) / 2;
-		playerCamera.y = entityHitbox.y + (playerCamera.height - entityHitbox.height) / 2;
+		playerCamera.x = entityHitbox.x + (entityHitbox.width - playerCamera.width) / 2;
+		playerCamera.y = entityHitbox.y + (entityHitbox.height - playerCamera.height) / 2;
 
 		healthBar.x = entityHitbox.x + (entityHitbox.width - healthBar.width) / 2;
 		healthBar.y = entityHitbox.y - 31;
