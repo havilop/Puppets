@@ -9,13 +9,24 @@ class MapIconBUILDING extends MapIcon
         super(entityy,mapp);
 
         remove(icon);
-		icon = new FlxSprite(0, 0).makeGraphic(20,20,FlxColor.RED);
-		icon.setGraphicSize(20, 20);
+		var className = Type.getClassName(Type.getClass(entity)).split('.');
+		var name = className[className.length - 1];
+
+		trace(name);
+
+		icon = new FlxSprite(0, 0);
+
+		if (name == 'Tower')
+		{
+			icon.makeGraphic(12, 12, entity.team != PlayState.selfEntity.team ? FlxColor.RED : FlxColor.GREEN);
+		}
+		
+
 		icon.updateHitbox();
 		add(icon);
     }    
     override function update(elapsed:Float) {
         super.update(elapsed);
-       
+
     }
 }

@@ -2,11 +2,12 @@ package game.entity.buildings.tower;
 
 class Tower extends Entity
 {
-    public function new() 
+	public function new(TEAM:PuppetsTeamEnum) 
     {
         super();
-        
+		team = TEAM;
         typeEntity = BUILDING;
+
         name = "TOWER";
 		setAbilities([TowerAttack]);
 

@@ -10,6 +10,7 @@ class MapIcon extends FlxSpriteGroup
 	public function new(PLAYER:Entity, MAP:MapHud)
 	{
 		super();
+
 		entity = PLAYER;
 		map = MAP;
 
@@ -23,15 +24,13 @@ class MapIcon extends FlxSpriteGroup
 	{
 		super.update(elapsed);
 
-        if (entity != null)
-        {
+		if (entity != null && entity.exists)
+		{
             icon.x = map.x + (entity.entityHitbox.x - 0) / (FlxG.worldBounds.width - 0) * 276;
 		    icon.y = map.y + (entity.entityHitbox.y - 0) / (FlxG.worldBounds.height - 0) * 269;
-        }
-		trace(entity);
-        if (entity == null)
-        {
-            trace('ss');
+		}
+		if (entity == null || !entity.exists)
+		{
             removeIcon();
         }
 	}

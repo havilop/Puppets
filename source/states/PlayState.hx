@@ -173,7 +173,11 @@ class PlayState extends PuppetsState
 		{
 			addPlayer("Monkey_King", puppets, false);
 
-			groupEntities.add(new Tower());
+			groupEntities.add(new Tower(puppets));
+
+			var tower = new Tower(people);
+			tower.entityHitbox.x = 500;
+			groupEntities.add(tower);
 		}
 
 		initializedJust();
