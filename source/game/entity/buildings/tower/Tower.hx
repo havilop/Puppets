@@ -16,5 +16,6 @@ class Tower extends Entity
 
 		entityHitbox.setGraphicSize(75, 125);
 		entityHitbox.updateHitbox();
+		PlayState.mapHud.addIcon(this);
     }
 }

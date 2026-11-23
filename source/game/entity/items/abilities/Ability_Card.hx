@@ -11,7 +11,7 @@ class Ability_Card extends Ability
     override function functionSpell() {
         super.functionSpell();
 
-        var zxc:Card = cast item;
+
         
     
 

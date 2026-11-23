@@ -8,6 +8,6 @@ class Radiance extends Item
 {
     public function new() 
     {
-        super("assets/player/items/radiance.png",["damagePhysic/55"],Ability_Radiance,0);   
+		super("assets/player/items/radiance.png", ["damagePhysic/55", "evasion/100"], Ability_Radiance, 0);   
     }
 }   

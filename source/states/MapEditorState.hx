@@ -73,4 +73,4 @@ class MapEditorState extends PuppetsState
         groupUI.add(containerUpItems);
 
     }
-}
+} 

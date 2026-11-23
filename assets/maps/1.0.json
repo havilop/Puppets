@@ -10,7 +10,7 @@
            {
             "name_class": "FlxSprite",
             "position": [0,0],
-            "image": "assets/maps/image.png",
+            "image": "assets/maps/map.png",
             "size": [2000,2000]
            },
            {

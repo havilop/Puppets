@@ -147,7 +147,7 @@ class MenuItem extends FlxSpriteGroup
                     FlxG.mouse.visible = true;
                     FlxG.switchState(PlayState.new);
                 case "mapeditor":
-                    FlxG.switchState(MapEditorState.new);
+				//   FlxG.switchState(MapEditorState.new);
                 case "settings":
                     trace(name);
                 case "exit":

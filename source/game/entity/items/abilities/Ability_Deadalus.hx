@@ -14,51 +14,58 @@ class Abilitiy_Deadalus extends Ability
 	{
 		super.functionSpell();
 
-		if (attackEntity.typeEntity != BUILDING || attackEntity.typeEntity != WARD || attackEntity.typeEntity != COURIER)
+		if (attackEntity != null)
 		{
-			var number = FlxG.random.float(0, 100);
-
-			
-
-          
-			if (number <= 15)
+			if (attackEntity.typeEntity != BUILDING && attackEntity.typeEntity != WARD && attackEntity.typeEntity != COURIER)
 			{
-                var damage = (selfEntity.damagePhysic + (selfEntity.damagePhysic * 125 / 100)) - selfEntity.damagePhysic;
-				attackEntity.takeDamage(physic, damage, selfEntity);
-				chance = 25;
-                attackEntity.addVisualEffect(new CRIT_VisualEffect(damage));
-			} else {
-                chance += 1.5;
-            }
+				var number = FlxG.random.float(0, 100);
+
+				if (number <= chance)
+				{
+					if (attackEntity != null)
+					{
+						var damage = (selfEntity.damagePhysic + (selfEntity.damagePhysic * 125 / 100)) - selfEntity.damagePhysic;
+						attackEntity.takeDamage(physic, damage, selfEntity);
+						chance = 25;
+
+						attackEntity.addVisualEffect(new CRIT_VisualEffect(damage));
+					}
+				}
+				else
+				{
+					chance += 1.5;
+				}
+			}
 		}
 	}
 }
+
 class CRIT_VisualEffect extends VisualEffect
 {
-    var textCount:FlxText;
-    var storedValue:Float = 0;
-    public function new(number:Float) 
-    {
-        super();    
+	var textCount:FlxText;
+	var storedValue:Float = 0;
+
+	public function new(number:Float)
+	{
+		super();
 
 		textCount = new FlxText(0, 0, 0, '', 28);
 		textCount.color = FlxColor.RED;
-        textCount.font = Path.font;
-        textCount.text = "" + Std.int(number);
+		textCount.font = Path.font;
+		textCount.text = "" + Std.int(number);
 		add(textCount);
 	}
 
 	override function update(elapsed:Float)
 	{
-        storedValue += elapsed;
+		storedValue += elapsed;
 
-        if (storedValue >= 1)
-            selfEntity.removeVisualEffect(this);
+		if (storedValue >= 1)
+			selfEntity.removeVisualEffect(this);
 
 		super.update(elapsed);
 
 		textCount.x = selfEntity.entityHitbox.x + selfEntity.entityHitbox.width / 2;
 		textCount.y = selfEntity.entityHitbox.y - 125;
 	}
-    
 }

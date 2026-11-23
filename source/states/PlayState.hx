@@ -25,6 +25,7 @@ enum PuppetsTeamEnum
 
 class PlayState extends PuppetsState
 {
+
 	public static var mapPath:String = "assets/maps/1.0.json";
 
 	public static var cameraHud:FlxCamera;
@@ -120,6 +121,7 @@ class PlayState extends PuppetsState
 			if (entity.typeEntity == CHARACTER)
 			{
 				upItemsHud.updateHud();
+				mapHud.addIcon(entity);
 			}
 			for (key => player in groupEntities)
 			{
@@ -269,7 +271,7 @@ class PlayState extends PuppetsState
 				abilityVisual.x = col * (35 + 5);
 				effectsHud.add(abilityVisual);
 
-				effectsHud.x = (FlxG.width - ((35 * (effectsHud.length <= 10 ? effectsHud.length : 10) ) + 5)) / 2;
+				effectsHud.x = (FlxG.width - ((35 * (effectsHud.length <= 10 ? effectsHud.length : 10)) + 5)) / 2;
 				effectsHud.y = centerHud.y - 40 - row * 50;
 			}
 		}
@@ -1665,14 +1667,7 @@ class ItemHud extends FlxSpriteGroup
 			var mouseY = FlxG.mouse.gameY;
 
 			// Позиции ячеек
-			var slots = [
-				'10/8/0',
-				'80/8/1',
-				'150/8/2',
-				'10/74/3',
-				'80/74/4',
-				'150/74/5'
-			];
+			var slots = ['10/8/0', '80/8/1', '150/8/2', '10/74/3', '80/74/4', '150/74/5'];
 
 			// Сначала проверяем, куда мы бросили предмет
 			var targetSlot:Int = -1;
@@ -1690,7 +1685,7 @@ class ItemHud extends FlxSpriteGroup
 
 				trace(PlayState.itemsBgHud.x);
 				trace(PlayState.itemsBgHud.y);
-				trace(slotX,slotY);
+				trace(slotX, slotY);
 				// Проверяем, попали ли мы в эту ячейку
 				if (mouseX >= slotX && mouseX <= slotX + 60 && mouseY >= slotY && mouseY <= slotY + 60)
 				{
@@ -1746,7 +1741,7 @@ class ItemHud extends FlxSpriteGroup
 
 					isDragging = false;
 					PlayState.isDraggingItem = false;
-					PlayState.setFocusOnPlayerAndUpdateHud(item.selfEntity, true,"items");
+					PlayState.setFocusOnPlayerAndUpdateHud(item.selfEntity, true, "items");
 				}
 			}
 			else
@@ -1761,7 +1756,7 @@ class ItemHud extends FlxSpriteGroup
 		item.key = Key;
 		isDragging = false;
 		PlayState.isDraggingItem = false;
-		PlayState.setFocusOnPlayerAndUpdateHud(item.selfEntity, true,"items");
+		PlayState.setFocusOnPlayerAndUpdateHud(item.selfEntity, true, "items");
 	}
 
 	override function destroy()
@@ -1784,6 +1779,7 @@ class EffectHud extends FlxSpriteGroup
 
 	var time_mask:FlxBar;
 	var was:Bool = false;
+
 	public function new(EFFECT:Effect)
 	{
 		super();
@@ -1795,20 +1791,18 @@ class EffectHud extends FlxSpriteGroup
 		icon.updateHitbox();
 		add(icon);
 
-		time_mask = new FlxBar(0,0,LEFT_TO_RIGHT,35,35);
-		time_mask.createColoredFilledBar(FlxColor.fromRGB(0,0,0,100));
-		time_mask.createColoredEmptyBar(FlxColor.fromRGB(0,0,0,0));
-		time_mask.setRange(0,1);
+		time_mask = new FlxBar(0, 0, LEFT_TO_RIGHT, 35, 35);
+		time_mask.createColoredFilledBar(FlxColor.fromRGB(0, 0, 0, 100));
+		time_mask.createColoredEmptyBar(FlxColor.fromRGB(0, 0, 0, 0));
+		time_mask.setRange(0, 1);
 		add(time_mask);
 
-		count = new FlxText(0,0,0,'1',20);
-		count.setBorderStyle(OUTLINE,FlxColor.BLACK,2);
+		count = new FlxText(0, 0, 0, '1', 20);
+		count.setBorderStyle(OUTLINE, FlxColor.BLACK, 2);
 		count.font = Path.font;
 		count.x = (icon.width - count.fieldWidth) / 2;
 		count.y = (icon.height - count.fieldHeight) / 2;
 		add(count);
-
-
 
 		bg = new FlxSprite(0, 0, 'assets/player/hud/right.png');
 		bg.setGraphicSize(300, bg.height);
@@ -1834,32 +1828,26 @@ class EffectHud extends FlxSpriteGroup
 	{
 		super.update(elapsed);
 
-	
-		
 		if (effect.timeStatusEffectDefault > 0)
 		{
-			time_mask.setRange(0,effect.timeStatusEffectDefault);
+			time_mask.setRange(0, effect.timeStatusEffectDefault);
 		}
-		time_mask.value = effect.timeStatusEffectDefault - effect.timeStatusEffectDefaultStored ;
+		time_mask.value = effect.timeStatusEffectDefault - effect.timeStatusEffectDefaultStored;
 		count.text = effect.count + "";
 		if (effect.count > 0)
 		{
 			count.visible = true;
-		} else {
+		}
+		else
+		{
 			count.visible = false;
 		}
 		var isoverlaps:Bool = icon.overlapsPoint(FlxG.mouse.getWorldPosition(PlayState.cameraHud));
 
-
-
 		if (isoverlaps)
 		{
-			
-			
-			
 			name.fieldWidth = bg.width - 5;
 
-			
 			description.fieldWidth = bg.width - 5;
 
 			var thewhole = 10 + name.fieldHeight + description.fieldHeight;
@@ -1868,7 +1856,7 @@ class EffectHud extends FlxSpriteGroup
 			bg.y = icon.y - thewhole - 5;
 
 			name.x = bg.x + 5;
-			name.y = bg.y + 5;	
+			name.y = bg.y + 5;
 
 			description.x = bg.x + 5;
 			description.y = name.y + name.fieldHeight + 5;
@@ -1876,17 +1864,12 @@ class EffectHud extends FlxSpriteGroup
 			name.visible = true;
 			description.visible = true;
 			bg.visible = true;
-
-
-			
 		}
-		if (isoverlaps == false )
+		if (isoverlaps == false)
 		{
-			
 			name.visible = false;
 			description.visible = false;
 			bg.visible = false;
-		
 		}
 	}
 }
@@ -2077,17 +2060,45 @@ class StoreHud extends FlxSpriteGroup
 
 class MapHud extends FlxSpriteGroup
 {
-	public var bg:FlxSprite;
+	public var bg:PuppetsButton;
+	public var bgmap:FlxSprite;
+	public var iconsGroup:FlxSpriteGroup;
 
 	public function new()
 	{
 		super(0, 0);
 
-		bg = new FlxSprite(0, 0).loadGraphic('assets/player/hud/map.png');
+		bg = new PuppetsButton(0, 0, '', function name()
+		{
+			var worldX = (FlxG.mouse.gameX - this.x) / 276 * (2000 - 0) + 0;
+			var worldY = (FlxG.mouse.gameY - this.y) / 269 * (2000 - 0) + 0;
+
+			trace(FlxG.mouse.viewX - this.x, worldX);
+
+			FlxG.camera.scroll.x = worldX - FlxG.width / 2;
+			FlxG.camera.scroll.y = worldY - FlxG.height / 2;
+		}, PlayState.cameraHud);
+		bg.loadGraphic('assets/player/hud/map.png');
 		add(bg);
+
+		bgmap = new FlxSprite(0, 0).loadGraphic('assets/maps/map.png');
+		bgmap.setGraphicSize(276, 269);
+		bgmap.updateHitbox();
+		add(bgmap);
+
+		iconsGroup = new FlxSpriteGroup();
+		add(iconsGroup);
 
 		this.x = 0;
 		this.y = FlxG.height - bg.height;
+	}
+	public function addIcon(entity:Entity)
+	{
+		trace('MapIcon' + entity.typeEntity);
+
+		var icon = Type.createInstance(Type.resolveClass('game.hud.MapIcon' + entity.typeEntity), [entity, this]);
+
+		iconsGroup.add(icon);
 	}
 }
 

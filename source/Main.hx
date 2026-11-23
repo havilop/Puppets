@@ -2,7 +2,6 @@ package;
 
 import flixel.FlxGame;
 import openfl.display.Sprite;
-import states.MapEditorState;
 
 class Main extends Sprite
 {

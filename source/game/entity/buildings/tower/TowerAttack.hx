@@ -66,7 +66,7 @@ class TowerAttackProjectile extends FlxSprite
 
 		if (this.overlaps(this.player.entityHitbox))
 		{
-			this.player.takeDamage(physic, damage, selfEntity);
+			this.player.applieAttack(damage, selfEntity);
 			this.destroy();
 		}
 	}

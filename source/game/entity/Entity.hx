@@ -105,6 +105,8 @@ class Entity extends FlxGroup
 	public var damagePhysic:Float = 50;
 	public var damageMagic:Int = 0;
 
+	public var evasion:Float = 0;
+
 	public var lifeStealPhysic:Float = 50;
 	public var lifeStealMagic:Float = 0;
 
@@ -171,6 +173,9 @@ class Entity extends FlxGroup
 
 	public var flat_bonus_lifeStealPhysic:Float = 0;
 	public var flat_bonus_lifeStealPhysic_list:Array<Float> = [];
+
+	public var flat_bonus_evasion:Float = 0;
+	public var flat_bonus_evasion_list:Array<Float> = [];
 
 	public var groupAbilities:FlxTypedGroup<Ability>;
 
@@ -580,9 +585,11 @@ class Entity extends FlxGroup
 		maxhealth = Std.int(basehealth + (strength * 22) + flat_bonus_maxhealth);
 		maxmana = Std.int(basemana + (12 * intellect));
 
-		damagePhysic = flat_bonus_damagePhysic;
+		damagePhysic = 0 + flat_bonus_damagePhysic;
 
-		lifeStealPhysic = flat_bonus_lifeStealPhysic;
+		lifeStealPhysic = 0 + flat_bonus_lifeStealPhysic;
+
+		evasion = 0 + flat_bonus_evasion;
 
 		speed = base_speed + Std.int(flat_bonus_speed);
 	}
@@ -683,18 +690,6 @@ class Entity extends FlxGroup
 		}
 
 		return false;
-	}
-
-	public function addCountEffect(int:Int, effect:Effect)
-	{
-		for (i in effects)
-		{
-			if (i == effect)
-			{
-				effect.count += int;
-				break;
-			}
-		}
 	}
 
 	public function initalizing()
@@ -916,7 +911,7 @@ class Entity extends FlxGroup
 			{
 				health = health - Std.int(Math.round(number));
 
-				if (this.typeEntity != BUILDING || this.typeEntity != COURIER || this.typeEntity != WARD)
+				if (this.typeEntity != BUILDING && this.typeEntity != COURIER && this.typeEntity != WARD)
 					ENTITYHWODEALDAMAGE.heal(number * (ENTITYHWODEALDAMAGE.lifeStealPhysic / 100));
 			}
 		}
@@ -1147,29 +1142,49 @@ class Entity extends FlxGroup
 		}
 	}
 
-	public function applieAttack(number:Float, hwodeals:Entity)
+	public function applieAttack(number:Float, hwodeals:Entity, ?trueStrike:Bool)
 	{
-		for (i in hwodeals.groupAbilities)
+		function attackFunction()
 		{
-			if (i.typeAbility == attack)
+			for (i in hwodeals.groupAbilities)
 			{
-				i.attackEntity = this;
-				i.activatePassive();
+				if (i.typeAbility == attack)
+				{
+					i.attackEntity = this;
+					i.activatePassive();
+				}
+			}
+
+			for (i in hwodeals.groupItems)
+			{
+				if (i.ability.typeAbility == attack)
+				{
+					i.ability.attackEntity = this;
+					i.ability.activatePassive();
+				}
+			}
+
+			takeDamage(physic, number, hwodeals);
+
+			hwodeals.attackSomeone.dispatch();
+		}
+		if (trueStrike == true)
+		{
+			attackFunction();
+		}
+		else
+		{
+			var random = FlxG.random.int(1, 100);
+
+			if (random <= evasion)
+			{
+				this.addVisualEffect(new VisualEffect_Attack_Missed());
+			}
+			else
+			{
+				attackFunction();
 			}
 		}
-
-		for (i in hwodeals.groupItems)
-		{
-			if (i.ability.typeAbility == attack)
-			{
-				i.ability.attackEntity = this;
-				i.ability.activatePassive();
-			}
-		}
-
-		takeDamage(physic, number, hwodeals);
-
-		hwodeals.attackSomeone.dispatch();
 	}
 
 	function position()
@@ -1253,5 +1268,35 @@ class Entity extends FlxGroup
 			trace(i);
 			i.removeEffect();
 		}
+	}
+}
+class VisualEffect_Attack_Missed extends VisualEffect
+{
+	var text:FlxText;
+	var stored:Float = 0;
+
+	public function new()
+	{
+		super();
+
+		text = new FlxText(0, 0, 0, 'missed', 12);
+		text.color = FlxColor.GRAY;
+		text.setBorderStyle(OUTLINE, FlxColor.BLACK, 1);
+		add(text);
+	}
+
+	override function update(elapsed:Float)
+	{
+		super.update(elapsed);
+
+		stored += elapsed;
+
+		if (stored >= 1.24)
+		{
+			selfEntity.removeVisualEffect(this);
+		}
+
+		text.x = selfEntity.entityHitbox.x + selfEntity.entityHitbox.width + 15;
+		text.y = selfEntity.entityHitbox.y;
 	}
 }

@@ -144,7 +144,7 @@ class Jingu_Mastery_Effect extends Effect
 			//selfEntity.attackSomeone.add(functios);
 			selfEntity.addVisualEffect(new Jingu_Mastery_VisualEffect_Buff());
 			selfEntity.addFlatBonus('damagePhysic', damage);
-			trace(lifestea);
+			
 			selfEntity.addFlatBonus('lifeStealPhysic',lifestea);
 		}, function name()
 		{

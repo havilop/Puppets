@@ -16,7 +16,7 @@ class Bounderless_Strike extends Ability
 
 	public function new()
 	{
-		super(false, 325, point, 0.35, 5, 100, 4, true, "assets/player/characters/monkey_king/palka.png", false);
+		super(false, 425, point, 0.35, 5, 100, 4, true, "assets/player/characters/monkey_king/palka.png", false);
 		super.setOptionPoint('damage', [35, 80, 135, 180]);
 		super.setOptionPoint('crit',[135,165,195,225]);
 		super.setOptionPoint('stunduration',[1.3,1.6,1.9,2.3]);
@@ -67,8 +67,8 @@ class Bounderless_Strike extends Ability
 					
 					if (FlxCollision.pixelPerfectCheck(i.entityHitbox,hitboxPalka))
 					{
-						
-						i.applieAttack(damage + (damage + crit / 100), selfEntity);
+						var dmg = damage + selfEntity.damagePhysic;
+						i.applieAttack(dmg + (dmg + crit / 100), selfEntity, true);
 						i.addEffect(new Bounderless_Strike_Effect(stunduration));
 					}
 				}
