@@ -21,6 +21,7 @@ class Necrophos extends Entity
 
 		baseSpeedAttack = 112;
 		projectileSpeed = 1200;
+		intervalAttack = 0.77;
 
         base_strength = 18;
         increase_strength = 2.3;

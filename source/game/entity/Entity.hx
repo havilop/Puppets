@@ -20,7 +20,7 @@ enum PuppetsTypeDamageEnum
 enum PuppetsTypeAttackEnum
 {
 	RANGE;
-	MELLE;
+	MELEE;
 }
 
 enum PuppetsTypeAttributeEnum
@@ -101,7 +101,7 @@ class Entity extends FlxGroup
 	public var baseRangeAttack:Int;
 
 	public var rangeSpeedAttack:Int = 0;
-	public var intervalAttack:Float = 1.7;
+	public var intervalAttack:Float = 1;
 	public var baseSpeedAttack:Float = 100;
 	public var speedAttack:Int = 0;
 
@@ -311,9 +311,17 @@ class Entity extends FlxGroup
 
 			if (storedAttackingTime >= rateAttack)
 			{
-				trace(rateAttack);
-				if (typeAttack == MELLE)
-					attackEntity.applieAttack(damagePhysic, this);
+				if (typeAttack == MELEE)
+				{
+					if (!attackEntity.dead)
+					{
+						var random = FlxG.random.int(1, 4);
+
+						FlxG.sound.play('assets/player/sounds/melee' + random + '.ogg');
+
+						attackEntity.applieAttack(damagePhysic, this);
+					}
+				}
 
 				if (typeAttack == RANGE)
 					add(new ProjectileRangeAttack(this, attackEntity));
@@ -1137,7 +1145,7 @@ class Entity extends FlxGroup
 									isAttacking = true;
 
 									attackEntity = entitie;
-									rateAttack = 0.3 + 0.47 * (100 / speedAttack); // 1 / (speedAttack / (100 * intervalAttack));
+									rateAttack = intervalAttack * (100 / speedAttack); // 1 / (speedAttack / (100 * intervalAttack));
 									storedAttackingTime = 0;
 								}
 
@@ -1370,6 +1378,7 @@ class VisualEffect_Attack_Missed extends VisualEffect
 		text.y = selfEntity.entityHitbox.y;
 	}
 }
+
 class ProjectileRangeAttack extends FlxSprite
 {
 	var _target:Entity;
@@ -1399,6 +1408,10 @@ class ProjectileRangeAttack extends FlxSprite
 
 		if (this.overlaps(_target.entityHitbox))
 		{
+			var random = FlxG.random.int(1, 4);
+
+			FlxG.sound.play('assets/player/sounds/projectile' + random + '.ogg');
+
 			_target.applieAttack(_hwoOwned.damagePhysic, _hwoOwned);
 			this.destroy();
 		}

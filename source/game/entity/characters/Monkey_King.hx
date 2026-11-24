@@ -19,10 +19,8 @@ class Monkey_King extends Entity
 		typeEntity = CHARACTER;
 		mainAttribute = AGILITY;
 		name = "Monkey King";
-		typeAttack = MELLE;
+		typeAttack = MELEE;
         baseSpeedAttack = 119;
-
-        addFlatBonus('speedAttack',200);
 
 		setAbilities([Bounderless_Strike, Jingu_Mastery]);
 
