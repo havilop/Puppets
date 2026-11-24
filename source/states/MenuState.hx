@@ -145,6 +145,7 @@ class MenuItem extends FlxSpriteGroup
             {
                 case "play":
                     FlxG.mouse.visible = true;
+				PlayState.mapPath = 'assets/maps/puppets';
                     FlxG.switchState(PlayState.new);
                 case "mapeditor":
 				//   FlxG.switchState(MapEditorState.new);

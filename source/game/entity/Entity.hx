@@ -97,10 +97,20 @@ class Entity extends FlxGroup
 	public var rangeAttackHitBox:FlxShapeCircle;
 	public var attackAble:Bool = false;
 	public var typeAttack:PuppetsTypeAttackEnum = RANGE;
-	public var rangeAttack:Int = 100;
+	public var rangeAttack:Int = 0;
+	public var baseRangeAttack:Int;
+
 	public var rangeSpeedAttack:Int = 0;
-	public var intervalAttack:Float = 1.5;
-	public var speedAttack:Int = 100;
+	public var intervalAttack:Float = 1.7;
+	public var baseSpeedAttack:Float = 100;
+	public var speedAttack:Int = 0;
+
+	var isAttacking:Bool = false;
+	var rateAttack:Float = 0;
+	var storedAttackingTime:Float = 0;
+	var attackEntity:Entity;
+
+	public var projectileSpeed:Int = 400;
 
 	public var damagePhysic:Float = 50;
 	public var damageMagic:Int = 0;
@@ -177,6 +187,12 @@ class Entity extends FlxGroup
 	public var flat_bonus_evasion:Float = 0;
 	public var flat_bonus_evasion_list:Array<Float> = [];
 
+	public var flat_bonus_rangeAttack:Float = 0;
+	public var flat_bonus_rangeAttack_list:Array<Float> = [];
+
+	public var flat_bonus_speedAttack:Float = 0;
+	public var flat_bonus_speedAttack_list:Array<Float> = [];
+
 	public var groupAbilities:FlxTypedGroup<Ability>;
 
 	public var groupItems:FlxTypedGroup<Item>;
@@ -246,7 +262,7 @@ class Entity extends FlxGroup
 		rangeXpHitBox.visible = true;
 		add(rangeXpHitBox);
 
-		rangeAttackHitBox = new FlxShapeCircle(0, 0, rangeAttack, {thickness: 3, color: FlxColor.LIME, capsStyle: ROUND}, FlxColor.fromRGB(0, 200, 0, 25));
+		rangeAttackHitBox = new FlxShapeCircle(0, 0, baseRangeAttack, {thickness: 3, color: FlxColor.LIME, capsStyle: ROUND}, FlxColor.fromRGB(0, 200, 0, 25));
 		rangeAttackHitBox.visible = true;
 		add(rangeAttackHitBox);
 
@@ -289,6 +305,23 @@ class Entity extends FlxGroup
 			}
 		}
 
+		if (isAttacking)
+		{
+			storedAttackingTime += elapsed;
+
+			if (storedAttackingTime >= rateAttack)
+			{
+				trace(rateAttack);
+				if (typeAttack == MELLE)
+					attackEntity.applieAttack(damagePhysic, this);
+
+				if (typeAttack == RANGE)
+					add(new ProjectileRangeAttack(this, attackEntity));
+
+				cancelAttack();
+			}
+		}
+
 		super.update(elapsed);
 
 		calculateWholeStatistics();
@@ -299,6 +332,9 @@ class Entity extends FlxGroup
 		{
 			cancelMovement();
 		}
+
+		if (hasDisableControl(disable_attack))
+			cancelAttack();
 
 		if (isClient)
 		{
@@ -592,6 +628,17 @@ class Entity extends FlxGroup
 		evasion = 0 + flat_bonus_evasion;
 
 		speed = base_speed + Std.int(flat_bonus_speed);
+		rangeAttack = Std.int(baseRangeAttack + flat_bonus_rangeAttack);
+		speedAttack = Std.int(baseSpeedAttack + flat_bonus_speedAttack);
+	}
+
+	public function updateRangeHitbox()
+	{
+		rangeAttackHitBox.radius = rangeAttack;
+
+		rangeAttackHitBox.redrawShape();
+
+		rangeAttackHitBox.visible = false;
 	}
 
 	public function addFlatBonus(Type:String, Value:Float)
@@ -612,6 +659,10 @@ class Entity extends FlxGroup
 		}
 
 		Reflect.setField(this, 'flat_bonus_$Type', total);
+		if (Type == "rangeAttack")
+		{
+			updateRangeHitbox();
+		}
 	}
 
 	public function removeFlatBonus(Type:String, Value:Float)
@@ -1079,7 +1130,17 @@ class Entity extends FlxGroup
 							if (entitie.entityHitbox.overlapsPoint(FlxG.mouse.getWorldPosition())
 								&& FlxCollision.pixelPerfectCheck(rangeAttackHitBox, entitie.entityHitbox))
 							{
-								entitie.applieAttack(damagePhysic, this);
+								cancelMovement();
+
+								if (isAttacking == false)
+								{
+									isAttacking = true;
+
+									attackEntity = entitie;
+									rateAttack = 0.3 + 0.47 * (100 / speedAttack); // 1 / (speedAttack / (100 * intervalAttack));
+									storedAttackingTime = 0;
+								}
+
 								break;
 							}
 						}
@@ -1099,6 +1160,8 @@ class Entity extends FlxGroup
 
 			if (hasDisableControl(disable_movement) == false)
 			{
+				cancelAttack();
+
 				var mox = FlxG.mouse.x;
 				var moy = FlxG.mouse.y;
 
@@ -1134,12 +1197,18 @@ class Entity extends FlxGroup
 		if (FlxG.keys.anyJustPressed([Data.getKey(cancel)]))
 		{
 			cancelMovement();
-
+			cancelAttack();
 			for (i in groupAbilities)
 			{
 				i.cancelCast();
 			}
 		}
+	}
+
+	public function cancelAttack()
+	{
+		isAttacking = false;
+		storedAttackingTime = 0;
 	}
 
 	public function applieAttack(number:Float, hwodeals:Entity, ?trueStrike:Bool)
@@ -1270,6 +1339,7 @@ class Entity extends FlxGroup
 		}
 	}
 }
+
 class VisualEffect_Attack_Missed extends VisualEffect
 {
 	var text:FlxText;
@@ -1298,5 +1368,39 @@ class VisualEffect_Attack_Missed extends VisualEffect
 
 		text.x = selfEntity.entityHitbox.x + selfEntity.entityHitbox.width + 15;
 		text.y = selfEntity.entityHitbox.y;
+	}
+}
+class ProjectileRangeAttack extends FlxSprite
+{
+	var _target:Entity;
+	var _hwoOwned:Entity;
+
+	public function new(hwoOwned:Entity, target:Entity)
+	{
+		_hwoOwned = hwoOwned;
+		_target = target;
+		super(0, 0);
+
+		this.makeGraphic(25, 5);
+		this.updateHitbox();
+
+		this.x = _hwoOwned.entityHitbox.x + (_hwoOwned.entityHitbox.width - this.width) / 2;
+		this.y = _hwoOwned.entityHitbox.y + (_hwoOwned.entityHitbox.height - this.height) / 2;
+	}
+
+	override function update(elapsed:Float)
+	{
+		super.update(elapsed);
+
+		var angle:Float = Math.atan2(_target.entityHitbox.y - this.y, _target.entityHitbox.x - this.x);
+		this.angle = angle * 180 / Math.PI;
+		this.velocity.x = Math.cos(angle) * _hwoOwned.projectileSpeed;
+		this.velocity.y = Math.sin(angle) * _hwoOwned.projectileSpeed;
+
+		if (this.overlaps(_target.entityHitbox))
+		{
+			_target.applieAttack(_hwoOwned.damagePhysic, _hwoOwned);
+			this.destroy();
+		}
 	}
 }

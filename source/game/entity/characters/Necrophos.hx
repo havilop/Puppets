@@ -11,12 +11,16 @@ class Necrophos extends Entity
 
     public function new() 
     {
+		baseRangeAttack = 500;
         super();
         typeEntity = CHARACTER;
 
         name = "Necrophos";
 
         mainAttribute = INTELLECT;
+
+		baseSpeedAttack = 112;
+		projectileSpeed = 1200;
 
         base_strength = 18;
         increase_strength = 2.3;

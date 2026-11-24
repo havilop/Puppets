@@ -29,7 +29,8 @@ class Console extends FlxSpriteGroup
 		new ReviveCommand(),
 		new AddItemCommand(),
 		new AddLevelCommand(),
-		new KillCommand()
+		new KillCommand(),
+		new LoadMapCommand()
 	];
 
 	public function new()
@@ -369,5 +370,22 @@ class AddLevelCommand extends ConsoleCommand
 		{
 			PlayState.selfEntity.upgradeNewLevel();
 		}
+	}
+}
+class LoadMapCommand extends ConsoleCommand
+{
+	public function new()
+	{
+		name = "loadMap";
+	}
+
+	override function execute(args:Array<String>, console:Console)
+	{
+		super.execute(args, console);
+
+		var map = 'assets/maps/' + args[0];
+
+		PlayState.mapPath = map;
+		FlxG.switchState(PlayState.new);
 	}
 }

@@ -12,8 +12,6 @@ class MapIconBUILDING extends MapIcon
 		var className = Type.getClassName(Type.getClass(entity)).split('.');
 		var name = className[className.length - 1];
 
-		trace(name);
-
 		icon = new FlxSprite(0, 0);
 
 		if (name == 'Tower')

@@ -2,7 +2,7 @@
 	
 	"settings_map":
 	{
-	  "world_size": [2000,2000]
+	  "world_size": [10000,10000]
 	},
 	
 	
@@ -10,13 +10,13 @@
            {
             "name_class": "FlxSprite",
             "position": [0,0],
-            "image": "assets/maps/map.png",
-            "size": [2000,2000]
+            "image": "minimap.png",
+            "size": [10000,10000]
            },
            {
             "name_class": "FlxSprite",
             "position": [200,200],
-            "image": "assets/maps/image.png",
+            "image": "image.png",
             "colision": true
            },
            {

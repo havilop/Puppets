@@ -1,6 +1,5 @@
 package game.entity.characters;
 
-
 import game.entity.buildings.tower.TowerAttack;
 import game.entity.characters.abilities.monkey_king.Bounderless_Strike;
 import game.entity.characters.abilities.monkey_king.Jingu_Mastery;
@@ -11,16 +10,20 @@ import game.entity.items.Boots;
 
 class Monkey_King extends Entity
 {
-
-    public function new() 
-    {
+	public function new()
+	{
+		baseRangeAttack = 200;
 
 		super();
 
-        typeEntity = CHARACTER;
+		typeEntity = CHARACTER;
 		mainAttribute = AGILITY;
-        name = "Monkey King";
-        
+		name = "Monkey King";
+		typeAttack = MELLE;
+        baseSpeedAttack = 119;
+
+        addFlatBonus('speedAttack',200);
+
 		setAbilities([Bounderless_Strike, Jingu_Mastery]);
 
 		base_strength = 19;
@@ -28,13 +31,10 @@ class Monkey_King extends Entity
 
 		base_intellect = 20;
 		increase_intellect = 1.8;
+	}
 
-
-    }
-    override function update(elapsed:Float) {
-        super.update(elapsed);
-
-
-
-    }
+	override function update(elapsed:Float)
+	{
+		super.update(elapsed);
+	}
 }

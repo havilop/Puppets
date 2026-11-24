@@ -7,6 +7,7 @@ import flixel.system.debug.FlxDebugger;
 import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar.FlxBarFillDirection;
 import game.entity.buildings.tower.Tower;
+import game.entity.characters.Monkey_King;
 import game.entity.items.Blink_Dagger;
 import game.entity.items.Boots;
 import game.entity.items.Boots_Of_Speed;
@@ -26,7 +27,7 @@ enum PuppetsTeamEnum
 class PlayState extends PuppetsState
 {
 
-	public static var mapPath:String = "assets/maps/1.0.json";
+	public static var mapPath:String = "";
 
 	public static var cameraHud:FlxCamera;
 	public static var groupHud:FlxGroup;
@@ -151,6 +152,8 @@ class PlayState extends PuppetsState
 		groupAllEntitiesVisualAbilities = new FlxSpriteGroup();
 		add(groupAllEntitiesVisualAbilities);
 
+		addHud();
+
 		isInitialized = true;
 
 		super.create();
@@ -162,7 +165,7 @@ class PlayState extends PuppetsState
 
 		if (FlxG.keys.justPressed.ONE)
 		{
-			addPlayer("Monkey_King", people, true);
+			addPlayer("Necrophos", people, true);
 		}
 
 		if (FlxG.keys.justPressed.THREE)
@@ -507,7 +510,7 @@ class PlayState extends PuppetsState
 	{
 		if (isInitialized && !isInitJust)
 		{
-			addHud();
+			// addHud();
 
 			isInitJust = true;
 		}
@@ -529,7 +532,7 @@ class PlayState extends PuppetsState
 
 	function loadMap()
 	{
-		var mapData = Json.parse(File.getContent(mapPath));
+		var mapData = Json.parse(File.getContent(mapPath + '/map.json'));
 
 		groupSpriteMap = new FlxSpriteGroup(0, 0);
 		add(groupSpriteMap);
@@ -545,7 +548,7 @@ class PlayState extends PuppetsState
 			if (className == "FlxSprite")
 			{
 				var position = mapData.map[i].position;
-				var image = mapData.map[i].image;
+				var image = mapPath + '/' + mapData.map[i].image;
 				var size = mapData.map[i].size;
 				var colision = mapData.map[i].colision;
 
@@ -881,7 +884,7 @@ class PlayState extends PuppetsState
 
 	function applieWorldSettings()
 	{
-		var wolrd_size = Data.get(mapPath, "settings_map/world_size");
+		var wolrd_size = Data.get(mapPath + '/map.json', "settings_map/world_size");
 
 		FlxG.worldBounds.set(0, 0, wolrd_size[0], wolrd_size[1]);
 	}
@@ -2074,8 +2077,8 @@ class MapHud extends FlxSpriteGroup
 
 		bg = new PuppetsButton(0, 0, '', function name()
 		{
-			var worldX = (FlxG.mouse.gameX - this.x) / 276 * (2000 - 0) + 0;
-			var worldY = (FlxG.mouse.gameY - this.y) / 269 * (2000 - 0) + 0;
+			var worldX = (FlxG.mouse.gameX - this.x) / bgmap.width * (FlxG.worldBounds.width - 0) + 0;
+			var worldY = (FlxG.mouse.gameY - this.y) / bgmap.height * (FlxG.worldBounds.width - 0) + 0;
 
 			trace(FlxG.mouse.viewX - this.x, worldX);
 
@@ -2085,7 +2088,7 @@ class MapHud extends FlxSpriteGroup
 		bg.loadGraphic('assets/player/hud/map.png');
 		add(bg);
 
-		bgmap = new FlxSprite(0, 0).loadGraphic('assets/maps/map.png');
+		bgmap = new FlxSprite(0, 0).loadGraphic(BitmapData.fromFile(PlayState.mapPath + '/minimap.png'));
 		bgmap.setGraphicSize(276, 269);
 		bgmap.updateHitbox();
 		add(bgmap);

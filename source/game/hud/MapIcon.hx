@@ -26,8 +26,8 @@ class MapIcon extends FlxSpriteGroup
 
 		if (entity != null && entity.exists)
 		{
-            icon.x = map.x + (entity.entityHitbox.x - 0) / (FlxG.worldBounds.width - 0) * 276;
-		    icon.y = map.y + (entity.entityHitbox.y - 0) / (FlxG.worldBounds.height - 0) * 269;
+			icon.x = map.x + (entity.entityHitbox.x - 0) / (FlxG.worldBounds.width - 0) * map.bgmap.width;
+			icon.y = map.y + (entity.entityHitbox.y - 0) / (FlxG.worldBounds.height - 0) * map.bgmap.height;
 		}
 		if (entity == null || !entity.exists)
 		{
