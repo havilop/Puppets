@@ -68,7 +68,7 @@ class Jingu_Mastery_Effet extends Effect
 
 	public function new(who:Entity, damag:Int,lifeste)
 	{
-		super(true,Path.getPathCharacter("monkey_king","jingu_mastery.png"),"Jingu_Mastery","Hits from Monkey King");
+		super(true,Path.getPathCharacter("monkey_king","jingu_mastery.png"),"Jingu_Mastery","Hits from Monkey King",false,false);
 
 		whogive = who;
 
@@ -122,7 +122,7 @@ class Jingu_Mastery_Effect extends Effect
 
 	public function new(damag:Int,lifesteal:Int)
 	{
-		super(true,Path.getPathCharacter("monkey_king","jingu_mastery.png"),"Jingu_Mastery","Bonus Damage and Lifesteal");
+		super(true,Path.getPathCharacter("monkey_king","jingu_mastery.png"),"Jingu_Mastery","Bonus Damage and Lifesteal",true,true);
 
 		count = 4;
 

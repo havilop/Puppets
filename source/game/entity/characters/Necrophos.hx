@@ -20,8 +20,8 @@ class Necrophos extends Entity
         mainAttribute = INTELLECT;
 
 		baseSpeedAttack = 112;
-		projectileSpeed = 1200;
-		intervalAttack = 0.77;
+		projectileSpeed = 1000;
+		intervalAttack = 0.84;  
 
         base_strength = 18;
         increase_strength = 2.3;
@@ -32,7 +32,7 @@ class Necrophos extends Entity
         base_health_regeneration = 0.25;
         base_mana_regeneration = 100;
   
-        setAbilities([Death_Pulse,Ghost_Shroud,Death_Seeker,Scythe,HeartStopped_Aura]);
+        setAbilities([Death_Pulse,Ghost_Shroud,HeartStopped_Aura,Scythe]);
 
     }    
 }   

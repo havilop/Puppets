@@ -40,6 +40,8 @@ class Effect extends FlxGroup
 	public var timeStatusEffectDefaultStored:Float = 0;
 	public var isStatusEffect:Bool = false;
 	public var infintyTime:Bool = false;
+	public var dispellable:Bool = false;
+	public var good:Bool = false;
 
 	public var count:Int = 0;
 
@@ -49,7 +51,7 @@ class Effect extends FlxGroup
 
 	public var listDisableControl:Array<PuppetsDisableControl> = [];
 
-	public function new(IsDefaultStatusEffect:Bool,?Icon:String,?Name:String,?Description:String,?Good:Bool)
+	public function new(IsDefaultStatusEffect:Bool, ?Icon:String, ?Name:String, ?Description:String, ?Good:Bool, ?Dispellable:Bool)
 	{
 		super();
 		isStatusEffect = IsDefaultStatusEffect;
@@ -61,13 +63,26 @@ class Effect extends FlxGroup
 			icon = Icon;
 		}
 
+		if (Dispellable == null)
+		{
+			dispellable = false;
+		}
+		else
+		{
+			dispellable = Dispellable;
+		}
+
 		name = "" + Name;
 
 		description = "" + Description;
 
 		if (Good == null)
 		{
-			
+			good = false;
+		}
+		else
+		{
+			good = Good;
 		}
 
 		statusBar = new FlxBar(0, 0, LEFT_TO_RIGHT, 100, 10);

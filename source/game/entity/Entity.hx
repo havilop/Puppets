@@ -1264,10 +1264,19 @@ class Entity extends FlxGroup
 		}
 	}
 
+	public function applieDispell(Good:Bool)
+	{
+		for (i in effects)
+		{
+			if (i.dispellable && i.good == Good)
+			{
+				i.removeEffect();
+			}
+		}
+	}
+
 	function position()
 	{
-		// entityHitbox.y = entityHitbox.y - entityHitbox.height + entityHitbox.height;
-		// entityHitbox.x = entityHitbox.x - entityHitbox.width + entityHitbox.width;
 
 		rangeXpHitBox.x = entityHitbox.x - rangeXpHitBox.radius + (entityHitbox.width / 2);
 		rangeXpHitBox.y = entityHitbox.y - rangeXpHitBox.radius + (entityHitbox.height / 2);
@@ -1338,14 +1347,6 @@ class Entity extends FlxGroup
 			PlayState.setFocusOnPlayerAndUpdateHud(PlayState.selfEntity, true, WHAT);
 	}
 
-	public function removeAllTypeEffectsFromPerson(Classs:Class<Dynamic>)
-	{
-		for (i in effects)
-		{
-			trace(i);
-			i.removeEffect();
-		}
-	}
 }
 
 class VisualEffect_Attack_Missed extends VisualEffect

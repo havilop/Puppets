@@ -12,6 +12,7 @@ import game.entity.items.Blink_Dagger;
 import game.entity.items.Boots;
 import game.entity.items.Boots_Of_Speed;
 import game.entity.items.Deadalus;
+import game.entity.items.Nulifire;
 import game.entity.items.Radiance;
 import openfl.display.BitmapData;
 import openfl.system.System;
@@ -26,7 +27,6 @@ enum PuppetsTeamEnum
 
 class PlayState extends PuppetsState
 {
-
 	public static var mapPath:String = "";
 
 	public static var cameraHud:FlxCamera;
@@ -165,7 +165,7 @@ class PlayState extends PuppetsState
 
 		if (FlxG.keys.justPressed.ONE)
 		{
-			addPlayer("Monkey_King", people, true);
+			addPlayer("Necrophos", people, true);
 		}
 
 		if (FlxG.keys.justPressed.THREE)
@@ -1774,6 +1774,8 @@ class ItemHud extends FlxSpriteGroup
 
 class EffectHud extends FlxSpriteGroup
 {
+	var goodorbad:FlxSprite;
+	var dispellable:FlxText;
 	var effect:Effect;
 	var count:FlxText;
 	var icon:FlxSprite;
@@ -1792,6 +1794,11 @@ class EffectHud extends FlxSpriteGroup
 		super();
 
 		effect = EFFECT;
+
+		goodorbad = new FlxSprite(-2, -2);
+		goodorbad.makeGraphic(40, 40, effect.good == true ? FlxColor.LIME : FlxColor.RED);
+		goodorbad.updateHitbox();
+		add(goodorbad);
 
 		icon = new FlxSprite(0, 0, effect.icon);
 		icon.setGraphicSize(35, 35);
@@ -1888,10 +1895,11 @@ class StoreHud extends FlxSpriteGroup
 		{section: "base", item: new Boots()},
 		{section: "advanced", item: new Radiance()},
 		{section: "advanced", item: new Deadalus()},
-		{section: "advanced", item: new Blink_Dagger()}
+		{section: "advanced", item: new Blink_Dagger()},
+		{section: "advanced", item: new Nulifire()}
 	];
 
-	public var bg:FlxSprite;
+	public var bg:FlxSprite;	
 	public var isOpen:Bool = false;
 
 	var rectSection:FlxSprite;
@@ -2099,6 +2107,7 @@ class MapHud extends FlxSpriteGroup
 		this.x = 0;
 		this.y = FlxG.height - bg.height;
 	}
+
 	public function addIcon(entity:Entity)
 	{
 		trace('MapIcon' + entity.typeEntity);

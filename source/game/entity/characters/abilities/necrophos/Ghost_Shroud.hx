@@ -20,7 +20,7 @@ class Necrophos_Effect_Ghost_Shroud extends Effect
 {
     public function new() 
     {
-        super(true);
+		super(true, "assets/player/characters/necrophos/ghost.png", "Ethereal", 'etheral and get more magic', true, true);
     }
     override function activity() {
         
